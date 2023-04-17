@@ -26,14 +26,20 @@ public:
 		label->setPosition(ccp(200, 200));
 		addChild(label);
 
+		auto level = GJGameLevel::create();
+
+		auto newLayer = LevelInfoLayer::create(128);
+
+		CCDirector::sharedDirector()->replaceScene(CCTransitionFade::create(0.5f, PlayLayer::scene(newLayer)));
+
+		//auto level = GJGameLevel::create();
+    	//CCDirector::sharedDirector()->replaceScene(CCTransitionFade::create(0.5f, PlayLayer::scene(level)));
+
 		return true;
 	}
 };
 
 void MenuLayer_onNewgrounds(MenuLayer* self, CCObject* sender) {
-	//create and enter empty level
-	auto level = GJGameLevel::create();
-	CCDirector::sharedDirector()->replaceScene(CCTransitionFade::create(0.5f, PlayLayer::scene(level)));
 }
 
 bool GJDropDownLayer_init(GJDropDownLayer* self, const char* title, float height) {
@@ -44,12 +50,6 @@ bool GJDropDownLayer_init(GJDropDownLayer* self, const char* title, float height
 matdash::cc::c_decl<CCLabelBMFont*> CCLabelBMFont_create(const char* text, const char* fontfile) {
 	fmt::print("creating label with text: {}\n", text);
     return matdash::orig<&CCLabelBMFont_create>(text, fontfile);
-}
-
-//speed hack
-void PlayLayer_update_(PlayLayer* self, float dt) {
-	// another way of specifying the calling convention
-	matdash::orig<&PlayLayer_update_, matdash::Thiscall>(self, dt * 0.5f);
 }
 
 void mod_main(HMODULE) {
@@ -68,7 +68,7 @@ void mod_main(HMODULE) {
 	matdash::add_hook<&GJDropDownLayer_init>(base + 0x113530);
 	
 	// another way of specifying the calling convention
-	matdash::add_hook<&PlayLayer_update_, matdash::Thiscall>(base + 0x2029c0);
+	//matdash::add_hook<&PlayLayer_update_, matdash::Thiscall>(base + 0x2029c0);
 	
 	//hook cocos function
 	static auto cocos_addr = [](const char* symbol) -> auto {
